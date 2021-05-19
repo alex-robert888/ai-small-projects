@@ -1,5 +1,9 @@
 import numpy
+import pickle
 from enum import Enum
+from src.domain.coords import Coords
+from src.utils.variables import *
+from src.utils.config import *
 
 
 class MapCell(Enum):
@@ -9,37 +13,73 @@ class MapCell(Enum):
 
 class Map(object):
     def __init__(self):
-        self.__n = 0
-        self.__m = 0
-        self.__surface: numpy.matrix = None
+        self.n = 0
+        self.m = 0
+        self.surface: numpy.matrix = None
+        self.__starting_coords = Coords()
+        self.__available_directions = []
+        self.__visited = []
+        self.__how_many_visited = 0
 
-    @property
-    def n(self):
-        return self.__n
+    def get_cell_value(self, coords):
+        if 0 <= coords.x <= self.n and 0 <= coords.y <= self.m:
+            return self.surface[coords.y][coords.x]
 
-    @property
-    def m(self):
-        return self.__m
+    def get_starting_coords(self):
+        return self.__starting_coords
 
-    @property
-    def surface(self):
-        return self.__surface
+    def get_available_directions_for_cell(self, coords: Coords):
+        return self.__available_directions[coords.y][coords.x]
 
-    @n.setter
-    def n(self, value):
-        self.__n = value
+    def is_valid_cell(self, coords: Coords):
+        return 0 <= coords.x < self.n and 0 <= coords.y < self.m and self.surface[coords.y, coords.x] == 0
 
-    @m.setter
-    def m(self, value):
-        self.__m = value
+    def load_from_binary_file(self, map_file_path: str):
+        with open(map_file_path, "rb") as f:
+            loaded_map = pickle.load(f)
+            self.n = loaded_map.n
+            self.m = loaded_map.m
+            self.surface = loaded_map.surface
+            print("---- surface")
+            for x in range(self.n):
+                for y in range(self.m):
+                    print(self.surface[y][x], end=' ')
+                print()
+            print("---- surface")
+            self.__starting_coords = Coords(STARTING_COORDS_X, STARTING_COORDS_Y)
+            self.__precompute_available_directions_for_each_cell()
 
-    @surface.setter
-    def surface(self, value):
-        self.__surface = value
+    def init_exploring(self):
+        self.__visited = [[False for x in range(self.m)] for y in range(self.n)]
+        self.__how_many_visited = 0
 
-    def load_from_binary_file(self):
+    def explore(self, coords):
+        for direction in DIRECTIONS:
+            copy_coords = Coords(coords.x, coords.y) + direction
+            while self.is_valid_cell(copy_coords):
+                if not self.__visited[copy_coords.y][copy_coords.x]:
+                    self.__how_many_visited += 1
+                    self.__visited[copy_coords.y][copy_coords.x] = True
+                copy_coords += direction
 
+    def finish_exploring(self):
+        return self.__how_many_visited
 
-    def get_cell_value(self, coord_i, coord_j):
-        if 0 <= coord_i <= self.__n and 0 <= coord_j <= self.__m:
-            return self.__surface[coord_j][coord_j]
+    def __precompute_available_directions_for_each_cell(self):
+        self.__available_directions = [[None for x in range(self.m)] for y in range(self.n)]
+        for x in range(self.n):
+            for y in range(self.m):
+                self.__precompute_directions(Coords(x, y))
+                #print("x: ", x, " y: ", y, " direction: ", self.__available_directions[y][x])
+        #print("breakpoint")
+
+    def __precompute_directions(self, coords: Coords):
+        self.__available_directions[coords.y][coords.x] = list()
+
+        if self.surface[coords.y][coords.x] == 1:
+            return
+
+        for direction in range(len(DIRECTIONS)):
+            next_coords = coords + DIRECTIONS[direction]
+            if self.is_valid_cell(next_coords):
+                self.__available_directions[coords.y][coords.x].append(direction)
