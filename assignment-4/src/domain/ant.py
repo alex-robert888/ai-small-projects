@@ -52,7 +52,7 @@ class Ant(object):
             next_coords = prev_coords + dir
             h = self.compute_heuristic(next_coords)
             trace = self.__map.trace[next_coords.y][next_coords.x]
-            p = (h ** BETA)
+            p = (h ** BETA) * (trace ** ALPHA)
             p_vector.append([next_coords, p])
             if p > maxx[1]:
                 maxx = [next_coords, p]

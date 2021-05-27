@@ -104,10 +104,13 @@ class Map(object):
 
     # region - SENSORS
     def populate_sensors(self):
-        self.__sensors[(12, 12)] = []
+        self.__sensors[(10, 5)] = []
         self.__sensors[(7, 8)] = []
         self.__sensors[(10, 7)] = []
-        self.__sensors[(11, 11)] = []
+        self.__sensors[(6, 3)] = []
+        self.__sensors[(9, 11)] = []
+        self.__sensors[(4, 4)] = []
+        self.__sensors[(12, 5)] = []
 
         for sensor in self.__sensors:
             self.surface[sensor[1], sensor[0]] = 2

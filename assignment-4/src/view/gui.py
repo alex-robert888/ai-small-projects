@@ -60,6 +60,8 @@ class Gui(object):
             brick.fill(self.__STARTING_BRICK_COLOR)
             for i in range(0, limit_index):
                 current_coords = best_solution[1][i]
+                if self.__map.get_cell_value(Coords(x, y)) == 2:
+                    continue
                 map_surface.blit(brick, (current_coords.y * self.__CELL_SIZE, current_coords.x * self.__CELL_SIZE))
 
             current_coords = best_solution[1][limit_index - 1]

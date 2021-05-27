@@ -46,6 +46,8 @@ class Controller(object):
     def run(self):
         best_solution = [-1, []]
         for epoch in range(NUMBER_OF_EPOCHS):
+            if epoch % 10 == 0:
+                self.__map.trace = [[1 for i in range(self.__map.n)] for j in range(self.__map.m)]
             print("Epoch no. ", epoch)
             new_solution = self.__run_epoch()
             print("--- Solution fitness: ", new_solution[0])
