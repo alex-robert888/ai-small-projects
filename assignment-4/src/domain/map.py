@@ -27,7 +27,7 @@ class Map(object):
         self.surface: numpy.matrix = None
         self.__starting_coords = Coords(STARTING_COORDS_X, STARTING_COORDS_Y)
         self.__available_directions = []
-        self.__visited = []
+        self.visited = []
         self.__how_many_visited = 0
         self.__sensors = dict()
         self.__min_paths_each_pair = dict()
@@ -70,16 +70,16 @@ class Map(object):
             self.print_surface()
 
     def init_exploring(self):
-        self.__visited = [[False for x in range(self.m)] for y in range(self.n)]
+        self.visited = [[False for x in range(self.m)] for y in range(self.n)]
         self.__how_many_visited = 0
 
     def explore(self, coords):
         for direction in DIRECTIONS:
             copy_coords = Coords(coords.x, coords.y) + direction
             while self.is_valid_cell(copy_coords):
-                if not self.__visited[copy_coords.y][copy_coords.x]:
+                if not self.visited[copy_coords.y][copy_coords.x]:
                     self.__how_many_visited += 1
-                    self.__visited[copy_coords.y][copy_coords.x] = True
+                    self.visited[copy_coords.y][copy_coords.x] = True
                 copy_coords += direction
 
     def finish_exploring(self):
@@ -104,13 +104,17 @@ class Map(object):
 
     # region - SENSORS
     def populate_sensors(self):
-        self.__sensors[(10, 5)] = []
         self.__sensors[(7, 8)] = []
         self.__sensors[(10, 7)] = []
         self.__sensors[(6, 3)] = []
-        self.__sensors[(9, 11)] = []
-        self.__sensors[(4, 4)] = []
         self.__sensors[(12, 5)] = []
+        self.__sensors[(7, 4)] = []
+        self.__sensors[(5, 10)] = []
+        self.__sensors[(8, 12)] = []
+        self.__sensors[(16, 6)] = []
+        self.__sensors[(6, 13)] = []
+        self.__sensors[(13, 6)] = []
+        self.__sensors[(11, 9)] = []
 
         for sensor in self.__sensors:
             self.surface[sensor[1], sensor[0]] = 2

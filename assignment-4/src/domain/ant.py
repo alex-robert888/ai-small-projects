@@ -31,8 +31,10 @@ class Ant(object):
     def compute_heuristic(self, coords) -> int:
         max_heuristic_ratio = 0
         for sensor_coords in self.__map.get_sensors():
-            heuristic_for_counters = sum(self.__map.get_sensors()[sensor_coords])
+            heuristic_for_counters = sum(self.__map.get_sensors()[sensor_coords]) * 1.2
             heuristic_for_distance = self.heuristic_for_distance(coords.x, coords.y, sensor_coords[0], sensor_coords[1])
+            if (sensor_coords[0], sensor_coords[1]) in self.__visited_sensors:
+                continue
             if heuristic_for_distance != 0:
                 heuristic_ratio = heuristic_for_counters / heuristic_for_distance
             else:

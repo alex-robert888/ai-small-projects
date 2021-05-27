@@ -50,11 +50,6 @@ class Controller(object):
                 self.__map.trace = [[1 for i in range(self.__map.n)] for j in range(self.__map.m)]
             print("Epoch no. ", epoch)
             new_solution = self.__run_epoch()
-            print("--- Solution fitness: ", new_solution[0])
-            print("--- Solution path: ", end=" ")
-            for s in new_solution[1]:
-                print("(", s.x, ", ", s.y, ") ", end=" ")
-
             best_solution = self.best_of(best_solution, new_solution)
 
         return best_solution
